@@ -48,26 +48,23 @@ export class GildedRose {
       }
 
 
-      if (this.items[i].name != 'Aged Brie') {
-        if (this.items[i].quality > 0) {
-          this.items[i].quality = this.items[i].quality - 1
+      if (this.items[i].name === 'Aged Brie') {
+        if (this.items[i].sellIn < 0) {
+          this.items[i].quality = Math.min(this.items[i].quality + 2, 50);
         }
-      } else {
-        if (this.items[i].quality < 50) {
-          this.items[i].quality = this.items[i].quality + 1
+        else {
+          this.items[i].quality = Math.min(this.items[i].quality + 1, 50);
         }
+        continue;
       }
 
       if (this.items[i].sellIn < 0) {
-        if (this.items[i].name === 'Aged Brie') {
-          this.items[i].quality = Math.min(50, this.items[i].quality + 1);
-        }
-        else {
-          this.items[i].quality = Math.max(0, this.items[i].quality - 1);
-        }
+        this.items[i].quality = Math.max(0, this.items[i].quality - 2);
+      }
+      else {
+        this.items[i].quality = Math.max(0, this.items[i].quality - 1);
       }
     }
-
     return this.items;
   }
 }
