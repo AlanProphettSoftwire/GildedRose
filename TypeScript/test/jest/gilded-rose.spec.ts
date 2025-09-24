@@ -18,7 +18,7 @@ it.each<expectedValuesAfterUpdateSet>([
   ['Base Case Item - at zero boundary', 1, 1, 0, 0],        //at zero boundary
   ['Base Case Item - twice the speed', 0, 6, -1, 4],        //twice the speed
   ['Base Case Item - sellIn goes negative', 0, 1, -1, 0],   //sellIn goes negative
-  ['Aged Brie', 15 ,5 , 14, 6],                             //Brie increases in 
+  ['Aged Brie', 15, 5, 14, 6],                             //Brie increases in 
   ['Aged Brie', 0, 5, -1, 7],                               //Out of date brie twice as good
   ['Aged Brie', -9, 5, -10, 7],                             //Long out of date brie twice as good
   ['Aged Brie', -9, 50, -10, 50],                           //Long out of date brie twice as good
@@ -70,7 +70,7 @@ describe('updateQuality', () => {
     expect(items[0].quality).toBe(0);
   });
 
-   test('should decrease in sellIn and quality is 0 if item Backstage passes is past sellIn date', () => {
+  test('should decrease in sellIn and quality is 0 if item Backstage passes is past sellIn date', () => {
     const gildedRose = new GildedRose([new Item(
       'Backstage passes to a TAFKAL80ETC concert',
       -1000,
@@ -129,6 +129,52 @@ describe('updateQuality', () => {
     expect(items[0].sellIn).toBe(9);
     expect(items[0].quality).toBe(50);
   });
-  
 
+  test('should decrease in sellIn and increase quality remain as 50 if item Brie and quality is already 50', () => {
+    const gildedRose = new GildedRose([new Item(
+      'Aged Brie',
+      10,
+      50
+    )]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].name).toBe('Aged Brie');
+    expect(items[0].sellIn).toBe(9);
+    expect(items[0].quality).toBe(50);
+  });
+
+  test('should decrease in sellIn and increase quality to 50 if item Brie and quality is already 49', () => {
+    const gildedRose = new GildedRose([new Item(
+      'Aged Brie',
+      -7,
+      49
+    )]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].name).toBe('Aged Brie');
+    expect(items[0].sellIn).toBe(-8);
+    expect(items[0].quality).toBe(50);
+  });
+
+  test('should decrease in sellIn and increase quality by 1 if item Brie and quality is less than 50', () => {
+    const gildedRose = new GildedRose([new Item(
+      'Aged Brie',
+      7,
+      10
+    )]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].name).toBe('Aged Brie');
+    expect(items[0].sellIn).toBe(6);
+    expect(items[0].quality).toBe(11);
+  });
+
+  test('should decrease in sellIn and increase quality by 2 if SellIn negative and item Brie and quality is less than 49', () => {
+    const gildedRose = new GildedRose([new Item(
+      'Aged Brie',
+      -7,
+      48
+    )]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].name).toBe('Aged Brie');
+    expect(items[0].sellIn).toBe(-8);
+    expect(items[0].quality).toBe(50);
+  });
 });
