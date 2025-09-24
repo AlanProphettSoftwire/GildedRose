@@ -57,4 +57,78 @@ describe('updateQuality', () => {
     expect(items[0].sellIn).toBe(10);
     expect(items[0].quality).toBe(80);
   });
+
+  test('should decrease in sellIn and quality is 0 if item Backstage passes is on sellIn date', () => {
+    const gildedRose = new GildedRose([new Item(
+      'Backstage passes to a TAFKAL80ETC concert',
+      0,
+      10
+    )]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].name).toBe('Backstage passes to a TAFKAL80ETC concert');
+    expect(items[0].sellIn).toBe(-1);
+    expect(items[0].quality).toBe(0);
+  });
+
+   test('should decrease in sellIn and quality is 0 if item Backstage passes is past sellIn date', () => {
+    const gildedRose = new GildedRose([new Item(
+      'Backstage passes to a TAFKAL80ETC concert',
+      -1000,
+      0
+    )]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].name).toBe('Backstage passes to a TAFKAL80ETC concert');
+    expect(items[0].sellIn).toBe(-1001);
+    expect(items[0].quality).toBe(0);
+  });
+
+  test('should decrease in sellIn and increase quality by 1 if item Backstage passes is 11 days before sellIn date', () => {
+    const gildedRose = new GildedRose([new Item(
+      'Backstage passes to a TAFKAL80ETC concert',
+      11,
+      10
+    )]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].name).toBe('Backstage passes to a TAFKAL80ETC concert');
+    expect(items[0].sellIn).toBe(10);
+    expect(items[0].quality).toBe(11);
+  });
+
+  test('should decrease in sellIn and increase quality by 2 if item Backstage passes is 6 days before sellIn date', () => {
+    const gildedRose = new GildedRose([new Item(
+      'Backstage passes to a TAFKAL80ETC concert',
+      6,
+      10
+    )]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].name).toBe('Backstage passes to a TAFKAL80ETC concert');
+    expect(items[0].sellIn).toBe(5);
+    expect(items[0].quality).toBe(12);
+  });
+
+  test('should decrease in sellIn and increase quality by 3 if item Backstage passes is 1 days before sellIn date', () => {
+    const gildedRose = new GildedRose([new Item(
+      'Backstage passes to a TAFKAL80ETC concert',
+      1,
+      10
+    )]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].name).toBe('Backstage passes to a TAFKAL80ETC concert');
+    expect(items[0].sellIn).toBe(0);
+    expect(items[0].quality).toBe(13);
+  });
+
+  test('should decrease in sellIn and increase quality remain as 50 if item Backstage passes quality is already 50', () => {
+    const gildedRose = new GildedRose([new Item(
+      'Backstage passes to a TAFKAL80ETC concert',
+      10,
+      50
+    )]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].name).toBe('Backstage passes to a TAFKAL80ETC concert');
+    expect(items[0].sellIn).toBe(9);
+    expect(items[0].quality).toBe(50);
+  });
+  
+
 });
