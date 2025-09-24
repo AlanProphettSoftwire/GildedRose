@@ -19,15 +19,42 @@ it.each<expectedValuesAfterUpdateSet>([
   ['Base Case Item - twice the speed', 0, 6, -1, 4],        //twice the speed
   ['Base Case Item - sellIn goes negative', 0, 1, -1, 0],   //sellIn goes negative
   ['Aged Brie', 15 ,5 , 14, 6],                             //Brie increases in 
-  ['Aged Brie', 0, 5, -1, 7],                                //Out of date brie twice as good
-  ['Aged Brie', -9, 5, -10, 7],                                //Long out of date brie twice as good
-  ['Aged Brie', -9, 50, -10, 50]                                //Long out of date brie twice as good
-
+  ['Aged Brie', 0, 5, -1, 7],                               //Out of date brie twice as good
+  ['Aged Brie', -9, 5, -10, 7],                             //Long out of date brie twice as good
+  ['Aged Brie', -9, 50, -10, 50],                           //Long out of date brie twice as good
+  ['Sulfuras, Hand of Ragnaros', -9, 80, -9, 80],           //No change to SellIn or Quality when Sellin negative
+  ['Sulfuras, Hand of Ragnaros', 9, 80, 9, 80],             //No change to SellIn or Quality when Sellin positive
+  ['Sulfuras, Hand of Ragnaros', 0, 80, 0, 80],             //No change to SellIn or Quality when Sellin zero
+  ['Backstage passes to a TAFKAL80ETC concert', 11, 6, 10, 7], // more than 10 days left
+  ['Backstage passes to a TAFKAL80ETC concert', 10, 6, 9, 8],  // 10 days left
+  ['Backstage passes to a TAFKAL80ETC concert', 6, 6, 5, 8], // 6 days left
+  ['Backstage passes to a TAFKAL80ETC concert', 5, 6, 4, 9], // 5 days left
+  ['Backstage passes to a TAFKAL80ETC concert', 1, 6, 0, 9], // 1 day left
+  ['Backstage passes to a TAFKAL80ETC concert', 0, 6, -1, 0], // concert has happened
+  ['Backstage passes to a TAFKAL80ETC concert', 5, 49, 4, 50], // more than 5 days but quality at max
+  ['Backstage passes to a TAFKAL80ETC concert', 1, 49, 0, 50], // more than one day but quality at max
+  ['Backstage passes to a TAFKAL80ETC concert', 0, 49, -1, 0], // day has passed but quality at max
 ])('should return %s %i %i %i %i', (name, sellIn, quality, expectedSellIn, expectedQuality) => {
   const gildedRose = new GildedRose([new Item(name, sellIn, quality)]);
   const items = gildedRose.updateQuality();
-  console.log(expectedQuality)
   expect(items[0].name).toBe(name);
   expect(items[0].quality).toBe(expectedQuality);
   expect(items[0].sellIn).toBe(expectedSellIn);
+});
+
+
+
+describe('updateQuality', () => {
+
+  test('should not modify sellIn or quality if item is Sulfuras, Hand of Ragnaros', () => {
+    const gildedRose = new GildedRose([new Item(
+      'Sulfuras, Hand of Ragnaros',
+      10,
+      80
+    )]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].name).toBe('Sulfuras, Hand of Ragnaros');
+    expect(items[0].sellIn).toBe(10);
+    expect(items[0].quality).toBe(80);
+  });
 });
