@@ -1,15 +1,5 @@
 import { Item, GildedRose } from '@/gilded-rose';
 
-const POSSIBLE_ITEMS: String[] = ['Aged Brie', 'Sulfuras, Hand of Ragnaros', 'Backstage passes to a TAFKAL80ETC concert']
-
-// describe('Gilded Rose', () => {
-//   it('should foo', () => {
-//     const gildedRose = new GildedRose([new Item('foo', 0, 0)]);
-//     const items = gildedRose.updateQuality();
-//     expect(items[0].name).toBe('foo');
-//   });
-// });
-
 type expectedValuesAfterUpdateSet = [name: string, sellIn: number, quality: number, expectedSellIn: number, expectedQuality: number];
 
 it.each<expectedValuesAfterUpdateSet>([
@@ -18,7 +8,7 @@ it.each<expectedValuesAfterUpdateSet>([
   ['Base Case Item - at zero boundary', 1, 1, 0, 0],        //at zero boundary
   ['Base Case Item - twice the speed', 0, 6, -1, 4],        //twice the speed
   ['Base Case Item - sellIn goes negative', 0, 1, -1, 0],   //sellIn goes negative
-  ['Aged Brie', 15, 5, 14, 6],                             //Brie increases in 
+  ['Aged Brie', 15, 5, 14, 6],                              //Brie increases in 
   ['Aged Brie', 0, 5, -1, 7],                               //Out of date brie twice as good
   ['Aged Brie', -9, 5, -10, 7],                             //Long out of date brie twice as good
   ['Aged Brie', -9, 50, -10, 50],                           //Long out of date brie twice as good
@@ -34,6 +24,9 @@ it.each<expectedValuesAfterUpdateSet>([
   ['Backstage passes to a TAFKAL80ETC concert', 5, 49, 4, 50], // more than 5 days but quality at max
   ['Backstage passes to a TAFKAL80ETC concert', 1, 49, 0, 50], // more than one day but quality at max
   ['Backstage passes to a TAFKAL80ETC concert', 0, 49, -1, 0], // day has passed but quality at max
+  ['Conjured Mana Cake', 3, 6, 2, 4],                        //Conjured item standard speed
+  ['Conjured Mana Cake', 0, 6, -1, 2],                       //Conjured item twice the speed
+  ['Conjured Mana Cake', 0, 3, -1, 0],                       //Conjured item twice the speed but not below zero
 ])('should return %s %i %i %i %i', (name, sellIn, quality, expectedSellIn, expectedQuality) => {
   const gildedRose = new GildedRose([new Item(name, sellIn, quality)]);
   const items = gildedRose.updateQuality();
@@ -176,5 +169,41 @@ describe('updateQuality', () => {
     expect(items[0].name).toBe('Aged Brie');
     expect(items[0].sellIn).toBe(-8);
     expect(items[0].quality).toBe(50);
+  });
+
+  test('should decrease in sellIn and decrease quality by 2 if item is Conjured Mana Cake', () => {
+    const gildedRose = new GildedRose([new Item(
+      'Conjured Mana Cake',
+      3,
+      6
+    )]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].name).toBe('Conjured Mana Cake');
+    expect(items[0].sellIn).toBe(2);
+    expect(items[0].quality).toBe(4);
+  });
+
+  test('should decrease in sellIn and decrease quality by 4 if SellIn negative and item is Conjured Mana Cake', () => {
+    const gildedRose = new GildedRose([new Item(
+      'Conjured Mana Cake',
+      -1,
+      6
+    )]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].name).toBe('Conjured Mana Cake');
+    expect(items[0].sellIn).toBe(-2);
+    expect(items[0].quality).toBe(2);
+  });
+
+  test('should stop decrease when quality is 0 and item is Conjured Mana Cake', () => {
+    const gildedRose = new GildedRose([new Item(
+      'Conjured Mana Cake',
+      3,
+      0
+    )]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].name).toBe('Conjured Mana Cake');
+    expect(items[0].sellIn).toBe(2);
+    expect(items[0].quality).toBe(0);
   });
 });
