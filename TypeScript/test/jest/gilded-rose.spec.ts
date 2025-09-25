@@ -1,7 +1,5 @@
 import { Item, GildedRose } from '@/gilded-rose';
 
-const POSSIBLE_ITEMS: String[] = ['Aged Brie', 'Sulfuras, Hand of Ragnaros', 'Backstage passes to a TAFKAL80ETC concert', 'Conjured Mana Cake']
-
 type expectedValuesAfterUpdateSet = [name: string, sellIn: number, quality: number, expectedSellIn: number, expectedQuality: number];
 
 it.each<expectedValuesAfterUpdateSet>([
